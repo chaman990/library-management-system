@@ -1,12 +1,14 @@
 import Header from "@/components/header";
 import Books from "@/components/books";
-import Image from "next/image";
+import ReduxProvider from "@/lib/redux-provider";
 
 export default function Home() {
   return (
-    <main>
+    <ReduxProvider>
+      <main>
         <Header />
         <Books />
-    </main>
+      </main>
+    </ReduxProvider>
   );
 }
