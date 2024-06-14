@@ -4,14 +4,14 @@ import { RootState } from "@/lib/store";
 import Link from "next/link";
 import React, { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { redirect } from "next/navigation"
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const isAuthenticated = useSelector((state:RootState) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   useEffect(() => {
     // Check if isAuthenticated is true
@@ -23,11 +23,17 @@ export default function LoginPage() {
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
+    // Validate email and password
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+    if (!password.trim()) {
+      setError("Password is required");
+      return;
+    }
     try {
-      dispatch(login({
-        username: email,
-        password: password
-      }) as any);
+      dispatch(login({ username: email, password }) as any);
     } catch (err: any) {
       setError(err.message);
     }

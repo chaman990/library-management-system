@@ -1,13 +1,24 @@
 "use client";
 import { RootState } from "@/lib/store";
 import Link from "next/link";
-import React from "react";
-import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Header() {
+  const router = useRouter()
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+
+
+  const logout = () => {
+    router.push('/')
+    setTimeout(() => {
+      localStorage.clear()
+      window.location.reload()
+    }, 500);
+  }
 
   return (
     <>
@@ -36,7 +47,7 @@ export default function Header() {
               Home
             </Link>
             {isAuthenticated ? (
-              <button className="p-2 lg:px-4 md:mx-2 text-gray-600 rounded hover:bg-gray-200 hover:text-gray-700 transition-colors duration-300">
+              <button onClick={logout} className="p-2 lg:px-4 md:mx-2 text-gray-600 rounded hover:bg-gray-200 hover:text-gray-700 transition-colors duration-300">
                 Logout
               </button>
             ) : (
