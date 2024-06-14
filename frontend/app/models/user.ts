@@ -1,7 +1,8 @@
 export interface User{
+    id: number | string;
     username: string,
     name: string,
     email: string,
-    number: string | number,
+    phone: string | number,
     isAdmin: boolean
 }

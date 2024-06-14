@@ -1,64 +1,92 @@
-import React from 'react'
+"use client";
 
-function AdminPage() {
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Book } from "../models/book";
+import { RootState, useAppSelector } from "@/lib/store";
+import {
+  fetchBooks,
+  removeBook,
+  removeBookThunk,
+  returnBookThunk,
+} from "@/lib/features/books/bookSlices";
+import Link from "next/link";
+import Header from "@/components/header";
+
+const AdminMain: React.FC = () => {
+  const dispatch = useDispatch();
+  const booksData = useSelector((state: RootState) => state.books);
+
+  // Fetch books on component mount
+  useEffect(() => {
+    // Dispatch the fetchBooks action
+    dispatch(fetchBooks() as any);
+  }, [dispatch]);
+
+  const handleRemoveBook = (id: number | string) => {
+    dispatch(removeBookThunk(id));
+  };
+
+  const handleReturnBook = (id: number | string) => {
+    dispatch(returnBookThunk(id) as any);
+  };
+
+  if (booksData.loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (booksData.error) {
+    return <div>Error: {booksData.error}</div>;
+  }
+
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <>
+      <Header />
+      <div className="flex flex-col items-center">
+        <Link
+          href={"/admin/add-new-book"}
+          className="bg-blue-500 text-white py-2 px-4 rounded mb-4 m-10"
+        >
+          Add Book
+        </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-6xl">
+          {booksData.books?.map((book, index) => (
+            <div key={index} className="bg-white rounded shadow-md p-4">
+              <h3 className="text-xl font-bold mb-2">{book.name}</h3>
+              <p>
+                {book.available
+                  ? "Book is available"
+                  : "Book is Issued right now"}
+              </p>
+              <div className="mt-4">
+                {book.available ? (
+                  <Link
+                    href={`/admin/issue-book/${book.id}`}
+                    className="mr-3 bg-green-500 text-white py-1 px-2 rounded"
+                  >
+                    Issue
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => handleReturnBook(book.id)}
+                    className="bg-yellow-500 text-white py-1 px-2 rounded mr-3"
+                  >
+                    Return
+                  </button>
+                )}
+                <button
+                  onClick={() => handleRemoveBook(book.id)}
+                  className="mr-2 bg-red-500 text-white py-1 px-2 rounded"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default AdminPage
-
-
-// "use client";
-
-
-// import { RootState } from '@/redux/store';
-// import React from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { Book } from '../models/book';
-// import { addBook, issueBook, removeBook, returnBook } from '@/redux/bookSlices';
-
-// const ExampleComponent: React.FC = () => {
-//   const dispatch = useDispatch();
-//   const books = useSelector((state: RootState) => state.user.books);
-
-//   const handleAddBook = () => {
-//     const newBook: Book = {
-//         id: 1, name: 'New Book', available: true,
-//         author: ''
-//     }; // Example book
-//     dispatch(addBook(newBook));
-//   };
-
-//   const handleRemoveBook = (id: number | string) => {
-//     dispatch(removeBook(id));
-//   };
-
-//   const handleIssueBook = (id: number | string) => {
-//     dispatch(issueBook(id));
-//   };
-
-//   const handleReturnBook = (id: number | string) => {
-//     dispatch(returnBook(id));
-//   };
-
-//   return (
-//     <div>
-//       <button onClick={handleAddBook}>Add Book</button>
-//       <ul>
-//         {books.map(book => (
-//           <li key={book.id}>
-//             {book.name} - {book.available ? 'Available' : 'Not Available'}
-//             <button onClick={() => handleRemoveBook(book.id)}>Remove</button>
-//             <button onClick={() => handleIssueBook(book.id)}>Issue</button>
-//             <button onClick={() => handleReturnBook(book.id)}>Return</button>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default ExampleComponent;
+export default AdminMain;

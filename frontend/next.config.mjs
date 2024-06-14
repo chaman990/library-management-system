@@ -1,10 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        loader: 'akamai',
-        path: '',
-        domains: ['images.pexels.com']
+  basePath:"",
+  reactStrictMode: true,
+  images: {
+    loader: "akamai",
+    path: "", // <----- THIS IS THE ISSUE
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
       },
+    ],
+  },
 };
 
 export default nextConfig;

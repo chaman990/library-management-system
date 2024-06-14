@@ -1,29 +1,27 @@
+// app.module.ts
+
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BooksModule } from './book/book.module';
+import { UsersModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mongodb',
-      // host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      ssl: true,
-
-      autoLoadEntities: true,
-
-      // Only enable this option if your application is in development,
-      // otherwise use TypeORM migrations to sync entity schemas:
-      // https://typeorm.io/#/migrations
+      host: 'localhost',
+      port: 27017,
+      database: 'library',
+      useNewUrlParser: true,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-
-],
-  controllers: [AppController],
-  providers: [AppService],
+    BooksModule,
+    UsersModule,
+    AuthModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

@@ -1,19 +1,37 @@
+"use client";
+import { Book } from "@/app/models/book";
 import Header from "@/components/header";
+import { fetchBooks } from "@/lib/features/books/bookSlices";
+import { RootState } from "@/lib/store";
 import Image from "next/image";
 import Link from "next/link";
-
-
-const singleBook = {
-  id: 1,
-  name: "The Art of majesty - 3",
-  author: "Brinjal",
-  currentlyAvailable: false,
-  price: 10,
-  image: "https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg",
-  description: "The description of this book",
-};
+import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const BookPage = () => {
+  const router = useParams();
+  const { id } = router;
+  const booksData = useSelector((state: RootState) => state.books);
+  let singleBook!: Book;
+  booksData.books?.map((book) => {
+    if (book.id === id) {
+      singleBook = book;
+    }
+  });
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchBooks() as any);
+  }, [dispatch]);
+
+  if (!singleBook) {
+    return (
+      <>
+        <h2 className="heading">The book is not found</h2>
+      </>
+    );
+  }
   return (
     <>
       <Header />
@@ -37,7 +55,7 @@ const BookPage = () => {
               className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
               height={500}
               width={600}
-              src={singleBook.image}
+              src={singleBook?.image}
               style={{ cursor: "auto" }}
             />
             <div
@@ -45,7 +63,7 @@ const BookPage = () => {
               style={{ cursor: "auto" }}
             >
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                {singleBook.currentlyAvailable ? "Available" : "Out of Stock"}
+                {singleBook.available ? "Available" : "Out of Stock"}
               </h2>
               <h1
                 className="text-gray-900 text-3xl title-font font-medium mb-1"
